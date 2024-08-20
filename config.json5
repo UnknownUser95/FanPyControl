@@ -1,0 +1,83 @@
+{
+	"interval": 0.3,
+	"controls": {
+		"/run/media/luca_s/Data-2TB/workspace/Python/FanPyControl/fake-fs/pwm2": {
+			// CPU fan
+			"fan_input": "/sys/devices/platform/nct6775.656/hwmon/::/fan2_input",
+			"average": 6,
+			"temperature": {
+				"input": "/sys/devices/pci0000:00/0000:00:18.3/hwmon/::/temp1_input",
+				"minimum": 60,
+				"maximum": 85
+			},
+			"pwm": {
+				"minimum": 32,
+				"maximum": 96,
+				"fan_start": 32,
+				"fan_stop": 32
+			}
+		},
+		"/run/media/luca_s/Data-2TB/workspace/Python/FanPyControl/fake-fs/pwm3": {
+			// water pump
+			"fan_input": "/sys/devices/platform/nct6775.656/hwmon/::/fan3_input",
+			"average": 6,
+			"temperature": {
+				"input": "/sys/devices/pci0000:00/0000:00:18.3/hwmon/::/temp1_input",
+				"minimum": 70,
+				"maximum": 89
+			},
+			"pwm": {
+				"minimum": 128,
+				"maximum": 160,
+				"fan_start": 128,
+				"fan_stop": 128
+			}
+		},
+		"/run/media/luca_s/Data-2TB/workspace/Python/FanPyControl/fake-fs/pwm5": {
+			// case fan
+			"fan_input": "/sys/devices/platform/nct6775.656/hwmon/::/fan5_input",
+			"average": 6,
+			"temperature": {
+				"input": "/sys/devices/pci0000:00/0000:00:18.3/hwmon/::/temp1_input",
+				"minimum": 60,
+				"maximum": 85
+			},
+			"pwm": {
+				"minimum": 32,
+				"maximum": 96,
+				"fan_start": 32,
+				"fan_stop": 32
+			}
+		},
+		"/run/media/luca_s/Data-2TB/workspace/Python/FanPyControl/fake-fs/pwm6": {
+			// chipset fan,
+			"average": 1,
+			"temperature": {
+				"input": "/sys/devices/platform/nct6775.656/hwmon/::/temp7_input",
+				"minimum": 0,
+				"maximum": 1
+			},
+			"pwm": {
+				"minimum": 0,
+				"maximum": 50,
+				"fan_stop": 0,
+				"fan_start": 0
+			}
+		},
+		"/run/media/luca_s/Data-2TB/workspace/Python/FanPyControl/fake-fs/pwm7": {
+			// light
+			"average": 6,
+			"pwm": {
+				"minimum": 32,
+				"maximum": 96,
+				"fan_start": 32,
+				"fan_stop": 32
+			},
+			"temperature": {
+				"input": "/sys/devices/pci0000:00/0000:00:18.3/hwmon/::/temp1_input",
+				"minimum": 60,
+				"maximum": 85
+			}
+		}
+	}
+}
