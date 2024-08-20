@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import signal
-from abc import ABC, abstractmethod
 from collections import deque
 from dataclasses import dataclass, field, InitVar
 from enum import IntEnum
@@ -63,32 +62,25 @@ class PWMMode(IntEnum):
 	AUTO = 5
 
 
-class JSONDecodeable(ABC):
-	@classmethod
-	@abstractmethod
-	def from_json(cls, data: dict[str, Any], *args, **kwargs):
-		pass
-
-
 @dataclass
-class PWMConfiguration(JSONDecodeable):
+class PWMConfiguration:
 	minimum: int
 	maximum: int
 	fan_stop: int
 	fan_start: int
 	
 	@classmethod
-	def from_json(cls, data: dict[str, Any], **kwargs):
+	def from_json(cls, data: dict[str, Any]):
 		return cls(
-			pwm_clamp(int(data["minimum"])),
-			pwm_clamp(int(data["maximum"])),
-			pwm_clamp(int(data["fan_stop"])),
-			pwm_clamp(int(data["fan_start"]))
+			pwm_clamp(data["minimum"]),
+			pwm_clamp(data["maximum"]),
+			pwm_clamp(data["fan_stop"]),
+			pwm_clamp(data["fan_start"])
 		)
 
 
 @dataclass
-class TemperatureConfiguration(JSONDecodeable):
+class TemperatureConfiguration:
 	input: TextIO
 	minimum: int
 	maximum: int
@@ -99,12 +91,9 @@ class TemperatureConfiguration(JSONDecodeable):
 		self.previous_temperatures = deque(maxlen=average)
 	
 	@classmethod
-	def from_json(cls, data: dict[str, Any], **kwargs):
+	def from_json(cls, data: dict[str, Any], average: int):
 		return cls(
-			resolve_and_validate_path(data["input"], "r"),
-			int(data["minimum"]),
-			int(data["maximum"]),
-			int(kwargs["average"])
+			resolve_and_validate_path(data["input"], "r"), data["minimum"], data["maximum"], average
 		)
 	
 	def _read_temperature(self) -> int:
@@ -121,7 +110,7 @@ class TemperatureConfiguration(JSONDecodeable):
 
 
 @dataclass
-class FanConfiguration(JSONDecodeable):
+class FanConfiguration:
 	pwm_file: TextIO
 	fan_input: TextIO | None
 	temperature: TemperatureConfiguration
@@ -137,11 +126,11 @@ class FanConfiguration(JSONDecodeable):
 		self.mode_file.seek(0)
 	
 	@classmethod
-	def from_json(cls, data: dict[str, Any], **kwargs):
+	def from_json(cls, data: dict[str, Any], pwm_file: str):
 		return cls(
-			resolve_and_validate_path(kwargs["pwm_file"], "w"),
+			resolve_and_validate_path(pwm_file, "w"),
 			resolve_and_validate_path(data["fan_input"], "r") if "fan_input" in data else None,
-			TemperatureConfiguration.from_json(data["temperature"], average=data["average"]),
+			TemperatureConfiguration.from_json(data["temperature"], data["average"]),
 			PWMConfiguration.from_json(data["pwm"])
 		)
 	
@@ -183,15 +172,15 @@ class FanConfiguration(JSONDecodeable):
 
 
 @dataclass
-class Configuration(JSONDecodeable):
+class Configuration:
 	interval: float
 	controls: list[FanConfiguration]
 	
 	@classmethod
-	def from_json(cls, data: dict[str, Any], **kwargs):
+	def from_json(cls, data: dict[str, Any]):
 		return cls(
-			float(data["interval"]),
-			[FanConfiguration.from_json(pwm_config, pwm_file=pwm_file) for pwm_file, pwm_config in
+			data["interval"],
+			[FanConfiguration.from_json(pwm_config, pwm_file) for pwm_file, pwm_config in
 				data["controls"].items()]
 		)
 

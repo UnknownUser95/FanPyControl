@@ -5,7 +5,7 @@ options = [
 ]
 
 a = Analysis(
-    ['pyfancontrol.py'],
+    ['fanpycontrol.py'],
     pathex=[],
     binaries=[],
     datas=[],
